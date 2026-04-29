@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Монгол бичиг сурахад зориулсан интерактив quiz, үсгийн сан, XP болон level системтэй сургалтын сайт.">
+<meta name="keywords" content="монгол бичиг, соёмбо, mongolian script, quiz, монгол үсэг">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="Соёмбо сурах самбар">
+<meta property="og:description" content="Монгол бичгийн үсэг, тоо, quiz game, XP болон level системтэй сургалтын сайт.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="mn_MN">
+<meta name="theme-color" content="#0b1830">
+<title>Соёмбо сурах самбар</title>
+<link rel="canonical" href="https://soymbo.mn/">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{
+  --bg:#08111f;
+  --bg-soft:#11203a;
+  --panel:rgba(10, 22, 42, 0.84);
+  --panel-strong:#0d1d35;
+  --line:rgba(255,255,255,0.12);
+  --text:#eef3fb;
+  --muted:#adc2df;
+  --gold:#f6ca67;
+  --gold-strong:#ffd977;
+  --accent:#71d7c7;
+  --shadow:0 18px 60px rgba(0,0,0,0.35);
+  --radius:24px;
+}
+
+*{box-sizing:border-box}
+
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  min-height:100vh;
+  color:var(--text);
+  font-family:"Segoe UI","Noto Sans",sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(246,202,103,0.18), transparent 34%),
+    radial-gradient(circle at right 20%, rgba(113,215,199,0.14), transparent 30%),
+    linear-gradient(160deg, #07101d 0%, #0b1830 48%, #112549 100%);
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size:28px 28px;
+  mask-image:linear-gradient(to bottom, rgba(0,0,0,0.35), transparent 75%);
+}
+
+.shell{
+  width:min(1180px, calc(100% - 32px));
+  margin:24px auto;
+}
+
+.hero{
+  position:relative;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:32px;
+  padding:28px;
+  background:linear-gradient(135deg, rgba(7,17,31,0.92), rgba(17,32,58,0.82));
+  box-shadow:var(--shadow);
+}
+
+.hero::after{
+  content:"";
+  position:absolute;
+  right:-80px;
+  top:-80px;
+  width:240px;
+  height:240px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(246,202,103,0.25), transparent 72%);
+}
+
+.hero-top{
+  display:flex;
+  justify-content:space-between;
+  gap:18px;
+  align-items:flex-start;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 14px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.08);
+  color:var(--gold);
+  font-size:14px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+}
+
+h1{
+  margin:16px 0 10px;
+  font-size:clamp(34px, 7vw, 68px);
+  line-height:0.95;
+  letter-spacing:0.04em;
+}
+
+.lead{
+  max-width:700px;
+  margin:0;
+  color:var(--muted);
+  font-size:18px;
+  line-height:1.7;
+}
+
+.hero-grid{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:18px;
+  margin-top:24px;
+}
+
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:20px;
+  backdrop-filter:blur(12px);
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:14px;
+}
+
+.stat{
+  padding:16px;
+  border-radius:20px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.06);
+}
+
+.stat strong{
+  display:block;
+  font-size:28px;
+  color:var(--gold-strong);
+}
+
+.stat span{
+  display:block;
+  margin-top:6px;
+  color:var(--muted);
+  font-size:14px;
+}
+
+.quote{
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+.quote p{
+  margin:0;
+  font-size:18px;
+  line-height:1.7;
+}
+
+.quote small{
+  margin-top:16px;
+  color:var(--accent);
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+}
+
+.nav{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin:20px 0 18px;
+}
+
+.nav button,
+.filter-chip,
+.letter-btn,
+.action-btn,
+.tab-btn{
+  border:none;
+  cursor:pointer;
+  transition:transform .18s ease, background .18s ease, border-color .18s ease, color .18s ease;
+}
+
+.nav button{
+  padding:12px 18px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.06);
+  color:var(--text);
+  border:1px solid transparent;
+  font-weight:700;
+}
+
+.nav button.active,
+.nav button:hover,
+.filter-chip.active,
+.filter-chip:hover,
+.tab-btn.active,
+.tab-btn:hover{
+  background:linear-gradient(135deg, rgba(246,202,103,0.22), rgba(113,215,199,0.16));
+  border-color:rgba(246,202,103,0.3);
+  color:var(--gold-strong);
+  transform:translateY(-1px);
+}
+
+.workspace{
+  display:grid;
+  grid-template-columns:1.1fr 0.9fr;
+  gap:18px;
+}
+
+.progress-rail{
+  width:100%;
+  height:12px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.08);
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,0.06);
+}
+
+.progress-fill{
+  height:100%;
+  width:0;
+  border-radius:999px;
+  background:linear-gradient(90deg, var(--accent), var(--gold-strong));
+  transition:width .25s ease;
+}
+
+.progress-fill.level{
+  background:linear-gradient(90deg, #ffb347, #ffd977);
+}
+
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+  margin-bottom:16px;
+}
+
+.section-head h2,
+.section-head h3{
+  margin:0;
+}
+
+.section-head p{
+  margin:6px 0 0;
+  color:var(--muted);
+}
+
+.toolbar{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:14px 0 18px;
+}
+
+.search{
+  flex:1 1 220px;
+  min-width:200px;
+  padding:13px 16px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,0.05);
+  color:var(--text);
+  outline:none;
+}
+
+.search::placeholder{color:#91a5c4}
+
+.filter-chip,
+.tab-btn{
+  padding:12px 16px;
+  border-radius:14px;
+  background:rgba(255,255,255,0.04);
+  color:var(--muted);
+  border:1px solid var(--line);
+  font-weight:600;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(84px, 1fr));
+  gap:12px;
+}
+
+.letter-btn{
+  min-height:88px;
+  border-radius:20px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+  border:1px solid rgba(255,255,255,0.08);
+  color:var(--text);
+  font-size:28px;
+  font-weight:700;
+}
+
+.letter-btn:hover,
+.letter-btn.active{
+  transform:translateY(-2px);
+  background:linear-gradient(180deg, rgba(246,202,103,0.22), rgba(255,255,255,0.05));
+  border-color:rgba(246,202,103,0.28);
+  color:var(--gold-strong);
+}
+
+.letter-meta{
+  display:block;
+  margin-top:6px;
+  min-height:0;
+}
+
+.merged-note{
+  margin-top:10px;
+  color:var(--muted);
+  font-size:14px;
+  text-align:center;
+}
+
+.merged-grid{
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:12px;
+  margin-top:18px;
+}
+
+.detail-card{
+  background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+}
+
+.script{
+  font-family:"Mongolian Baiti","Noto Sans Mongolian","Mongolian White",serif;
+  writing-mode:vertical-rl;
+  text-orientation:mixed;
+  color:var(--gold-strong);
+}
+
+.big-script{
+  font-size:66px;
+  min-height:120px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:12px 0;
+}
+
+
+.forms{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:12px;
+  margin-top:18px;
+}
+
+.form-box,
+.mini-card{
+  border-radius:18px;
+  padding:16px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.06);
+}
+
+.form-box h4,
+.mini-card h4{
+  margin:0 0 10px;
+  color:var(--muted);
+  font-size:13px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+}
+
+.combos{
+  margin-top:18px;
+}
+
+.combo-output{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:12px;
+  margin-top:14px;
+}
+
+.digits-grid{
+  display:grid;
+  grid-template-columns:repeat(5, 1fr);
+  gap:12px;
+}
+
+.digit-card{
+  text-align:center;
+  border-radius:18px;
+  padding:16px 10px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.06);
+}
+
+.digit-card strong{
+  font-size:22px;
+}
+
+.digit-card .script{
+  font-size:34px;
+  height:68px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  writing-mode:horizontal-tb;
+  text-orientation:mixed;
+}
+
+.empty{
+  color:var(--muted);
+  text-align:center;
+  padding:26px 12px;
+  border:1px dashed rgba(255,255,255,0.14);
+  border-radius:18px;
+}
+
+.action-btn{
+  padding:13px 16px;
+  width:100%;
+  border-radius:16px;
+  background:linear-gradient(135deg, rgba(246,202,103,0.24), rgba(113,215,199,0.18));
+  color:var(--text);
+  border:1px solid rgba(246,202,103,0.26);
+  font-weight:700;
+  margin-top:18px;
+}
+
+.action-btn:hover{transform:translateY(-1px)}
+
+.quiz-card{
+  padding:20px;
+  border-radius:22px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+  border:1px solid rgba(255,255,255,0.06);
+}
+
+.quiz-top{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+  margin-bottom:18px;
+}
+
+.quiz-meta{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.pill{
+  padding:10px 14px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+  color:var(--muted);
+  font-weight:700;
+}
+
+.pill.gold{
+  color:var(--gold-strong);
+  border-color:rgba(246,202,103,0.22);
+  background:rgba(246,202,103,0.08);
+}
+
+.question-box{
+  border-radius:20px;
+  padding:20px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.07);
+}
+
+.question-box h3,
+.question-box p{
+  margin:0;
+}
+
+.question-box p{
+  color:var(--muted);
+  margin-top:8px;
+}
+
+.rank-sticker{
+  margin:18px auto 10px;
+  width:min(100%, 360px);
+  padding:20px 24px;
+  border-radius:28px;
+  text-align:center;
+  background:linear-gradient(135deg, rgba(246,202,103,0.24), rgba(113,215,199,0.2));
+  border:1px solid rgba(246,202,103,0.28);
+  box-shadow:0 12px 30px rgba(0,0,0,0.22);
+}
+
+.rank-sticker strong{
+  display:block;
+  font-size:42px;
+  line-height:1;
+  color:var(--gold-strong);
+}
+
+.rank-sticker span{
+  display:block;
+  margin-top:8px;
+  font-size:16px;
+  color:var(--text);
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+}
+
+.quiz-prompt{
+  margin:16px 0 6px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:140px;
+  text-align:center;
+  font-size:42px;
+  font-weight:700;
+  color:var(--gold-strong);
+}
+
+.quiz-prompt.script{
+  min-height:200px;
+  font-size:84px;
+  line-height:1;
+}
+
+.quiz-prompt.word{
+  font-size:30px;
+  line-height:1.3;
+  letter-spacing:0.04em;
+}
+
+.quiz-options{
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:12px;
+  margin-top:16px;
+}
+
+.quiz-option{
+  padding:16px;
+  min-height:110px;
+  border-radius:18px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  color:var(--text);
+  font-size:18px;
+  font-weight:700;
+}
+
+.quiz-option .script{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:72px;
+  width:100%;
+  font-size:56px;
+  line-height:1;
+}
+
+.quiz-option .script.number-script,
+.quiz-prompt.number-script{
+  writing-mode:horizontal-tb;
+  text-orientation:mixed;
+}
+
+
+
+.quiz-option:hover{
+  transform:translateY(-1px);
+  border-color:rgba(246,202,103,0.3);
+}
+
+.quiz-option.correct{
+  background:rgba(113,215,199,0.18);
+  border-color:rgba(113,215,199,0.45);
+}
+
+.quiz-option.wrong{
+  background:rgba(255,112,112,0.16);
+  border-color:rgba(255,112,112,0.42);
+}
+
+.feedback{
+  min-height:30px;
+  margin-top:14px;
+  font-weight:700;
+}
+
+.feedback.good{color:var(--accent)}
+.feedback.bad{color:#ff9494}
+
+.feedback.xp{
+  color:var(--gold-strong);
+}
+
+.quiz-actions{
+  display:flex;
+  gap:12px;
+  margin-top:16px;
+}
+
+.secondary-btn{
+  padding:13px 16px;
+  border-radius:16px;
+  background:rgba(255,255,255,0.05);
+  color:var(--text);
+  border:1px solid rgba(255,255,255,0.08);
+  font-weight:700;
+  cursor:pointer;
+}
+
+.secondary-btn:hover{transform:translateY(-1px)}
+
+.footer-note{
+  margin:18px 0 4px;
+  color:var(--muted);
+  text-align:center;
+}
+
+@media (max-width: 960px){
+  .hero-grid,.workspace{grid-template-columns:1fr}
+}
+
+@media (max-width: 720px){
+  .shell{width:min(100% - 20px, 1180px)}
+  .hero{padding:20px}
+  .hero-top{flex-direction:column}
+  .stats,.forms,.combo-output,.digits-grid{grid-template-columns:1fr 1fr}
+}
+
+@media (max-width: 520px){
+  .stats,.forms,.combo-output,.digits-grid{grid-template-columns:1fr}
+  .nav{display:grid;grid-template-columns:1fr 1fr}
+  .big-script{font-size:54px}
+  .merged-grid{grid-template-columns:1fr}
+  .quiz-options{grid-template-columns:1fr}
+  .quiz-top,.quiz-actions{flex-direction:column;align-items:stretch}
+  .quiz-prompt.script{font-size:68px;min-height:160px}
+  .quiz-prompt.word{font-size:24px}
+  .quiz-option .script{font-size:46px;min-height:64px}
+}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Соёмбо сурах самбар",
+  "description": "Монгол бичиг сурахад зориулсан интерактив quiz, үсгийн сан, XP болон level системтэй сургалтын сайт.",
+  "inLanguage": "mn"
+}
+</script>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div class="hero-top">
+        <div>
+          <div class="badge">Mongol bichig</div>
+          <h1>Соёмбо сурах самбар</h1>
+        </div>
+      </div>
+
+      <div class="hero-grid">
+        <div class="panel">
+          <div class="stats">
+            <div class="stat"><strong>23</strong><span>Үндсэн үсэг</span></div>
+            <div class="stat"><strong>7</strong><span>Эгшиг</span></div>
+            <div class="stat"><strong>10</strong><span>Монгол тоо</span></div>
+          </div>
+        </div>
+        <div class="panel quote">
+          <p>"Өдөр бүр багахан давтах нь цээжлэхээс илүү тогтоодог."</p>
+          <small>Суралцах санамж</small>
+        </div>
+      </div>
+    </section>
+
+    <nav class="nav" aria-label="Үндсэн цэс">
+      <button class="active" data-page="home" type="button">Нүүр</button>
+      <button data-page="letters" type="button">Үсэг</button>
+      <button data-page="numbers" type="button">Тоо</button>
+      <button data-page="quiz" type="button">Quiz</button>
+      <button data-page="profile" type="button">Ахиц</button>
+    </nav>
+
+    <section class="workspace">
+      <div class="panel" id="main-panel"></div>
+      <aside class="panel detail-card" id="detail-panel"></aside>
+    </section>
+
+    <p class="footer-note">Монгол бичгийг сонирхож байгаа хүнд зориулсан энгийн, responsive туршилтын загвар.</p>
+  </main>
+
+<script>
+const letters = [
+  { char: "А", type: "egshig" }, { char: "Э", type: "egshig" }, { char: "И", type: "egshig" },
+  { char: "О", type: "egshig" }, { char: "У", type: "egshig" }, { char: "Ө", type: "egshig" },
+  { char: "Ү", type: "egshig" }, { char: "Я", type: "egshig" }, { char: "Е", type: "egshig" },
+  { char: "Ё", type: "egshig" }, { char: "Ю", type: "egshig" }, { char: "Н", type: "egshig_bus" }, { char: "М", type: "egshig_bus" },
+  { char: "Л", type: "egshig_bus" }, { char: "Р", type: "egshig_bus" }, { char: "Й", type: "egshig_bus" },
+  { char: "Г", type: "egshig_bus" }, { char: "Х", type: "egshig_bus" }, { char: "Б", type: "egshig_bus" }, { char: "В", type: "egshig_bus" },
+  { char: "Т", type: "egshig_bus" }, { char: "Д", type: "egshig_bus" }, { char: "С", type: "egshig_bus" },
+  { char: "Ш", type: "egshig_bus" }, { char: "Ж", type: "egshig_bus" }, { char: "Ч", type: "egshig_bus" },
+  { char: "П", type: "egshig_bus" }, { char: "Ф", type: "egshig_bus" }, { char: "К", type: "egshig_bus" }
+];
+
+const mongolianUnicode = {
+  "А":"ᠠ","Э":"ᠡ","И":"ᠢ","О":"ᠣ","У":"ᠤ","Ө":"ᠥ","Ү":"ᠦ","Я":"ᠶᠠ","Е":"ᠶᠡ","Ё":"ᠶᠣ","Ю":"ᠶᠤ",
+  "Н":"ᠨ","М":"ᠮ","Л":"ᠯ","Р":"ᠷ","Й":"ᠶ","Г":"ᠭ","Х":"ᠬ",
+  "Б":"ᠪ","В":"ᠸ","Т":"ᠲ","Д":"ᠳ","С":"ᠰ","Ш":"ᠱ","Ж":"ᠵ","Ч":"ᠴ","П":"ᠫ","Ф":"ᠹ","К":"ᠺ"
+};
+
+
+
+const vowels = ["А","Э","И","О","У","Ө","Ү","Я","Е","Ё","Ю"];
+const comboVowels = ["А","Э","И","О","У","Ө","Ү"];
+const digits = [
+  { latin:"0", mongol:"᠐" }, { latin:"1", mongol:"᠑" }, { latin:"2", mongol:"᠒" },
+  { latin:"3", mongol:"᠓" }, { latin:"4", mongol:"᠔" }, { latin:"5", mongol:"᠕" },
+  { latin:"6", mongol:"᠖" }, { latin:"7", mongol:"᠗" }, { latin:"8", mongol:"᠘" },
+  { latin:"9", mongol:"᠙" }
+];
+
+const quizSyllables = [
+  "АН", "АР", "АМ", "АС", "АТ", "НА", "НО", "НУ", "БА", "БО",
+  "БУ", "ГА", "ГО", "ГУ", "ДА", "ДО", "ДУ", "ЛА", "ЛО", "МА",
+  "МО", "МУ", "РА", "РО", "СА", "СО", "ТА", "ТО", "ХА", "ХО"
+];
+
+const confusingGroups = [
+  ["О", "Ө"],
+  ["У", "Ү"],
+  ["Т", "Д"],
+  ["Я", "Е"],
+  ["Ё", "Ю"],
+  ["О", "У"],
+  ["Ө", "Ү"],
+  ["Б", "В"]
+];
+
+const mergedDisplayGroups = [
+  ["О", "У"],
+  ["Ө", "Ү"],
+  ["Т", "Д"],
+  ["Ж", "З"],
+  ["Ч", "Ц"]
+];
+
+const state = {
+  page: "home",
+  filter: "all",
+  search: "",
+  selectedLetter: "А",
+  selectedVowel: "А",
+  player: {
+    xp: 0,
+    level: 1,
+    levelXp: 0,
+    nextLevelXp: 100,
+    bestStreak: 0,
+    lessonsCompleted: 0
+  },
+  quiz: {
+    total: 7,
+    current: 0,
+    score: 0,
+    streak: 0,
+    answered: false,
+    selectedIndex: null,
+    question: null,
+    finished: false,
+    earnedXp: 0,
+    lastXpGain: 0
+  }
+};
+
+const ZWJ = "\u200D";
+const STORAGE_KEY = "soyombo-learning-progress-v1";
+const mainPanel = document.getElementById("main-panel");
+const detailPanel = document.getElementById("detail-panel");
+const navButtons = Array.from(document.querySelectorAll(".nav button"));
+
+function saveProgress() {
+  const payload = {
+    player: state.player
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+}
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      return;
+    }
+
+    const parsed = JSON.parse(raw);
+    if (parsed.player) {
+      state.player = {
+        ...state.player,
+        ...parsed.player
+      };
+    }
+  } catch (error) {
+    console.warn("Progress load failed", error);
+  }
+}
+
+function buildForms(letter) {
+  const base = mongolianUnicode[letter] || "";
+
+  if (letter === "Т") {
+    return {
+      initial: base + ZWJ,
+      medial: ZWJ + "ᠳ" + ZWJ,
+      medialWithVowel: ZWJ + base + ZWJ,
+      final: ZWJ + "ᠳ"
+    };
+  }
+
+  return {
+    initial: base + ZWJ,
+    medial: ZWJ + base + ZWJ,
+    final: ZWJ + base
+  };
+}
+
+function buildCombo(letter, vowel) {
+  if (letter === "Т") {
+    const v = mongolianUnicode[vowel] || "";
+    const combo = "ᠲ" + ZWJ + v;
+    return {
+      initial: combo + ZWJ,
+      medial: ZWJ + combo + ZWJ,
+      final: ZWJ + combo
+    };
+  }
+
+  const l = mongolianUnicode[letter] || "";
+  const v = mongolianUnicode[vowel] || "";
+  const combo = l + ZWJ + v;
+  return {
+    initial: combo + ZWJ,
+    medial: ZWJ + combo + ZWJ,
+    final: ZWJ + combo
+  };
+}
+
+function getScriptSegment(char, position, nextChar = "") {
+  const forms = buildForms(char);
+
+  if (position === "initial") {
+    return forms.initial;
+  }
+
+  if (position === "final") {
+    return forms.final;
+  }
+
+  if (char === "Т") {
+    return vowels.includes(nextChar) ? forms.medialWithVowel : forms.medial;
+  }
+
+  return forms.medial;
+}
+
+function toMongolianScript(text) {
+  const chars = text.split("");
+
+  if (chars.length === 1) {
+    return mongolianUnicode[text] || text;
+  }
+
+  return chars.map((char, index) => {
+    const position = index === 0 ? "initial" : index === chars.length - 1 ? "final" : "medial";
+    return getScriptSegment(char, position, chars[index + 1] || "");
+  }).join("");
+}
+
+function findConfusingGroup(text) {
+  return confusingGroups.find((group) => group.some((char) => text.includes(char))) || null;
+}
+
+function findMergedDisplayGroup(text) {
+  return mergedDisplayGroups.find((group) => group.some((char) => text.includes(char))) || null;
+}
+
+function getMergedDisplayLabel(text) {
+  const group = findMergedDisplayGroup(text);
+  return group ? group.join(",") : text;
+}
+
+function getMergedRepresentative(char) {
+  const group = findMergedDisplayGroup(char);
+  return group ? group[0] : char;
+}
+
+function getMergedMembers(char) {
+  return findMergedDisplayGroup(char) || [char];
+}
+
+function getCatalogLetters() {
+  const seen = new Set();
+  return letters.filter((item) => {
+    const key = getMergedRepresentative(item.char);
+    if (seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
+}
+
+function renderFormValue(letter, forms, slot) {
+  if (letter === "Т" && slot === "medial") {
+    return `
+      <div class="big-script script">${forms.medialWithVowel}</div>
+      <div class="merged-note">Араас эгшиг орвол</div>
+      <div class="big-script script">${forms.medial}</div>
+      <div class="merged-note">Араас эгшиг орохгүй бол</div>
+    `;
+  }
+
+  return `<div class="big-script script">${forms[slot]}</div>`;
+}
+
+function filterConfusingOptions(pool, answer) {
+  const groups = confusingGroups.filter((group) => group.some((char) => answer.includes(char)));
+  if (!groups.length) {
+    return pool;
+  }
+
+  const blockedChars = new Set(groups.flat());
+  return pool.filter((item) => !Array.from(blockedChars).some((char) => item.includes(char)));
+}
+
+
+function setPage(page) {
+  state.page = page;
+  navButtons.forEach((button) => button.classList.toggle("active", button.dataset.page === page));
+  render();
+}
+
+function renderHome() {
+  mainPanel.innerHTML = `
+    <div class="section-head">
+      <div>
+        <h2>Эхлэх хэсэг</h2>
+        <p>Үсэг сонгож хэлбэрүүдийг харах эсвэл Монгол тоотой танилц.</p>
+      </div>
+    </div>
+    <div class="forms">
+      <div class="mini-card">
+        <h4>1. Үсгээ сонго</h4>
+        <p>Үндсэн үсгийн жагсаалтаас дарж хараарай.</p>
+      </div>
+      <div class="mini-card">
+        <h4>2. Хэлбэрээ ажигла</h4>
+        <p>Эхэн, дунд, адаг байрлалын дүрсийг зэрэгцүүлж үзнэ.</p>
+      </div>
+      <div class="mini-card">
+        <h4>3. Хувилбараа турш</h4>
+        <p>Гийгүүлэгч дээр эгшиг нэмээд дүрслэлийг шалгана.</p>
+      </div>
+    </div>
+    <button class="action-btn" type="button" id="jump-to-letters">Үсгийн хэсэг рүү орох</button>
+  `;
+
+  detailPanel.innerHTML = `
+    <div class="section-head">
+      <div>
+        <h3>Өнөөдрийн анхаарах зүйл</h3>
+        <p>Жижиг алхмаар давтахад тохиромжтой бүтэц.</p>
+      </div>
+    </div>
+    <div class="mini-card">
+      <h4>Санамж</h4>
+      <p>Мөнгөн хэлбэртэй фонтууд төхөөрөмж бүр дээр адил харагдахгүй байж болно. Гэхдээ бүтэц, байрлалын ойлголт дээр төвлөрөхөд энэ загвар хангалттай.</p>
+    </div>
+    <div class="mini-card" style="margin-top:12px;">
+      <h4>Санал</h4>
+      <p>Дараагийн хувилбарт дуу авиа, дасгал, шалгалтын горим нэмэхэд амар суурьтай болсон.</p>
+    </div>
+  `;
+
+  document.getElementById("jump-to-letters").addEventListener("click", () => setPage("letters"));
+}
+
+function renderLetters() {
+  const filtered = getCatalogLetters().filter((item) => {
+    const byFilter = state.filter === "all" || item.type === state.filter;
+    const mergedLabel = getMergedDisplayLabel(item.char);
+    const query = state.search.trim().toUpperCase();
+    const bySearch = query === "" || mergedLabel.includes(query) || item.char.includes(query);
+    return byFilter && bySearch;
+  });
+
+  mainPanel.innerHTML = `
+    <div class="section-head">
+      <div>
+        <h2>Үсгийн сан</h2>
+        <p>Эгшиг, гийгүүлэгчийг шүүж хараад нэг үсэг дээр төвлөрч болно.</p>
+      </div>
+    </div>
+    <div class="toolbar">
+      <input class="search" id="letter-search" type="text" placeholder="Үсэг хайх..." value="${state.search}">
+      <button class="filter-chip ${state.filter === "all" ? "active" : ""}" data-filter="all" type="button">Бүгд</button>
+      <button class="filter-chip ${state.filter === "egshig" ? "active" : ""}" data-filter="egshig" type="button">Эгшиг</button>
+      <button class="filter-chip ${state.filter === "egshig_bus" ? "active" : ""}" data-filter="egshig_bus" type="button">Гийгүүлэгч</button>
+    </div>
+    <div class="grid">
+      ${filtered.length ? filtered.map((item) => `
+        <button class="letter-btn ${getMergedRepresentative(state.selectedLetter) === getMergedRepresentative(item.char) ? "active" : ""}" type="button" data-letter="${item.char}">
+          ${getMergedDisplayLabel(item.char)}
+        </button>
+      `).join("") : '<div class="empty">Хайлтад тохирох үсэг олдсонгүй.</div>'}
+    </div>
+  `;
+
+  renderLetterDetail();
+
+  document.getElementById("letter-search").addEventListener("input", (event) => {
+    state.search = event.target.value;
+    renderLetters();
+  });
+
+  document.querySelectorAll("[data-filter]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.filter = button.dataset.filter;
+      renderLetters();
+    });
+  });
+
+  document.querySelectorAll("[data-letter]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.selectedLetter = button.dataset.letter;
+      if (!vowels.includes(state.selectedVowel)) {
+        state.selectedVowel = "А";
+      }
+      renderLetters();
+    });
+  });
+}
+
+function renderLetterDetail() {
+  const letter = state.selectedLetter;
+  const mergedMembers = getMergedMembers(letter);
+  const isMergedView = mergedMembers.length > 1;
+  const activeLetter = mergedMembers[0];
+  const type = vowels.includes(activeLetter) ? "Эгшиг" : "Гийгүүлэгч";
+  const forms = buildForms(activeLetter);
+  const canCombine = !vowels.includes(activeLetter);
+  const combo = buildCombo(activeLetter, state.selectedVowel);
+
+  detailPanel.innerHTML = `
+    <div class="section-head">
+      <div>
+        <h3>${isMergedView ? `${getMergedDisplayLabel(letter)} бүлэг` : `${activeLetter} үсэг`}</h3>
+        <p>${isMergedView ? "Төстэй харагддаг үсгүүдийг нэгтгэсэн харагдац" : `${type} үсгийн үндсэн хэлбэрүүд`}</p>
+      </div>
+    </div>
+    ${isMergedView ? `
+      <div class="mini-card">
+        <h4>Сонгосон хэлбэр</h4>
+        <div class="big-script script">${mongolianUnicode[activeLetter] || ""}</div>
+      </div>
+      <div class="forms">
+        <div class="form-box">
+          <h4>Эхэн</h4>
+          ${renderFormValue(activeLetter, forms, "initial")}
+        </div>
+        <div class="form-box">
+          <h4>Дунд</h4>
+          ${renderFormValue(activeLetter, forms, "medial")}
+        </div>
+        <div class="form-box">
+          <h4>Адаг</h4>
+          ${renderFormValue(activeLetter, forms, "final")}
+        </div>
+      </div>
+    ` : `
+      <div class="mini-card">
+        <h4>Сонгосон үсэг</h4>
+        <div class="big-script script">${mongolianUnicode[activeLetter] || ""}</div>
+      </div>
+      <div class="forms">
+        <div class="form-box">
+          <h4>Эхэн</h4>
+          ${renderFormValue(activeLetter, forms, "initial")}
+        </div>
+        <div class="form-box">
+          <h4>Дунд</h4>
+          ${renderFormValue(activeLetter, forms, "medial")}
+        </div>
+        <div class="form-box">
+          <h4>Адаг</h4>
+          ${renderFormValue(activeLetter, forms, "final")}
+        </div>
+      </div>
+    `}
+    ${canCombine ? `
+      <div class="combos">
+        <div class="section-head">
+          <div>
+            <h3>Эгшгээр хувилгах</h3>
+            <p>${activeLetter} + эгшиг хослолын харагдац</p>
+          </div>
+        </div>
+        <div class="toolbar">
+          ${comboVowels.map((vowel) => `
+            <button class="tab-btn ${state.selectedVowel === vowel ? "active" : ""}" type="button" data-vowel="${vowel}">${activeLetter}${vowel}</button>
+          `).join("")}
+        </div>
+        <div class="combo-output">
+          <div class="form-box">
+            <h4>Эхэн</h4>
+            <div class="big-script script">${combo.initial}</div>
+          </div>
+          <div class="form-box">
+            <h4>Дунд</h4>
+            <div class="big-script script">${combo.medial}</div>
+          </div>
+          <div class="form-box">
+            <h4>Адаг</h4>
+            <div class="big-script script">${combo.final}</div>
+          </div>
+        </div>
+      </div>
+    ` : `
+      <div class="mini-card" style="margin-top:18px;">
+        <h4>Тайлбар</h4>
+        <p>Энэ нь эгшиг тул эгшиг дээр нэмэлт хувилбарын самбар харуулахгүй.</p>
+      </div>
+    `}
+  `;
+
+  detailPanel.querySelectorAll("[data-vowel]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.selectedVowel = button.dataset.vowel;
+      renderLetterDetail();
+    });
+  });
+}
+
+function renderNumbers() {
+  mainPanel.innerHTML = `
+    <div class="section-head">
+      <div>
+        <h2>Монгол тоо</h2>
+        <p>0-9 хүртэлх тэмдэгтийг нэг дороос харууллаа.</p>
+      </div>
+    </div>
+    <div class="digits-grid">
+      ${digits.map((digit) => `
+        <div class="digit-card">
+          <strong>${digit.latin}</strong>
+          <div class="script">${digit.mongol}</div>
+        </div>
+      `).join("")}
+    </div>
+  `;
+
+  detailPanel.innerHTML = `
+    <div class="section-head">
+      <div>
+        <h3>Тоо цээжлэх арга</h3>
+        <p>Өдөр бүр 3-4 тэмдэгт давтаж харахад хурдан тогтоно.</p>
+      </div>
+    </div>
+    <div class="mini-card">
+      <h4>Дасгал</h4>
+      <p>1, 3, 5, 7, 9 гэсэн сондгой тоонуудыг эхэлж ялгаж хараад дараа нь тэгш тоонуудтай харьцуулж тогтоогоорой.</p>
+    </div>
+    <div class="mini-card" style="margin-top:12px;">
+      <h4>Дараагийн шат</h4>
+      <p>Дараа нь хоёр оронтой тоог хослуулсан жижиг дасгал нэмэхэд бэлэн суурь байна.</p>
+    </div>
+  `;
+}
+
+function shuffle(array) {
+  const copy = [...array];
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function getLevelProgressPercent() {
+  return Math.max(0, Math.min(100, Math.round((state.player.levelXp / state.player.nextLevelXp) * 100)));
+}
+
+function getQuizRank(score, total) {
+  if (score === total) {
+    return "Perfect";
+  }
+
+  if (score >= total - 1) {
+    return "Excellent";
+  }
+
+  if (score >= Math.ceil(total * 0.7)) {
+    return "Great";
+  }
+
+  if (score >= Math.ceil(total * 0.5)) {
+    return "Good";
+  }
+
+  return "Keep going";
+}
+
+function awardXp(amount) {
+  state.player.xp += amount;
+  state.player.levelXp += amount;
+
+  while (state.player.levelXp >= state.player.nextLevelXp) {
+    state.player.levelXp -= state.player.nextLevelXp;
+    state.player.level += 1;
+    state.player.nextLevelXp = 100 + ((state.player.level - 1) * 20);
+  }
+
+  saveProgress();
+}
+
+function createQuizQuestion() {
+  const roll = Math.random();
+  const useNumber = roll < 0.2;
+  const useWord = roll >= 0.2 && roll < 0.55;
+
+  if (useNumber) {
+    const picked = digits[Math.floor(Math.random() * digits.length)];
+    const mode = Math.random() > 0.5 ? "number-to-script" : "script-to-number";
+    const wrongPool = shuffle(digits.filter((item) => item.latin !== picked.latin)).slice(0, 3);
+    const options = shuffle([picked, ...wrongPool]).map((item) => ({
+      value: item.latin,
+      script: item.mongol
+    }));
+
+    return {
+      answer: picked.latin,
+      mode,
+      kind: "number",
+      options
+    };
+  }
+
+  if (useWord) {
+    const picked = quizSyllables[Math.floor(Math.random() * quizSyllables.length)];
+    const mode = Math.random() > 0.5 ? "word-to-script" : "script-to-word";
+    const filteredPool = filterConfusingOptions(quizSyllables.filter((item) => item !== picked), picked);
+    const sourcePool = filteredPool.length >= 3 ? filteredPool : quizSyllables.filter((item) => item !== picked);
+    const wrongPool = shuffle(sourcePool).slice(0, 3);
+    const options = shuffle([picked, ...wrongPool]).map((item) => ({
+      value: item,
+      script: toMongolianScript(item)
+    }));
+
+    return {
+      answer: picked,
+      mode,
+      kind: "word",
+      options
+    };
+  }
+
+  const picked = letters[Math.floor(Math.random() * letters.length)];
+  const mode = Math.random() > 0.5 ? "latin-to-script" : "script-to-latin";
+  const filteredPool = filterConfusingOptions(
+    letters.filter((item) => item.char !== picked.char).map((item) => item.char),
+    picked.char
+  );
+  const sourcePool = filteredPool.length >= 3
+    ? filteredPool.map((char) => letters.find((item) => item.char === char))
+    : letters.filter((item) => item.char !== picked.char);
+  const wrongPool = shuffle(sourcePool).slice(0, 3);
+  const options = shuffle([picked, ...wrongPool]).map((item) => ({
+    value: item.char,
+    script: mongolianUnicode[item.char]
+  }));
+
+  return {
+    answer: picked.char,
+    mode,
+    kind: "letter",
+    options
+  };
+}
+
+function resetQuiz() {
+  state.quiz = {
+    total: 7,
+    current: 0,
+    score: 0,
+    streak: 0,
+    answered: false,
+    selectedIndex: null,
+    question: createQuizQuestion(),
+    finished: false,
+    earnedXp: 0,
+    lastXpGain: 0
+  };
+}
+
+function renderQuiz() {
+  if (!state.quiz.question && !state.quiz.finished) {
+    resetQuiz();
+  }
+
+  const quiz = state.quiz;
+  const progress = Math.round((quiz.current / quiz.total) * 100);
+  const quizRank = getQuizRank(quiz.score, quiz.total);
+
+  if (quiz.finished) {
+    mainPanel.innerHTML = `
+      <div class="section-head">
+        <div>
+          <h2>Quiz дууслаа</h2>
+          <p>Богино давтлагаа амжилттай хийлээ.</p>
+        </div>
+      </div>
+      <div class="quiz-card">
+        <div class="quiz-meta">
+          <div class="pill">Оноо: ${quiz.score} / ${quiz.total}</div>
+          <div class="pill gold">${quiz.score}/${quiz.total} ${quizRank}</div>
+          <div class="pill">Дээд streak: ${state.player.bestStreak}</div>
+          <div class="pill gold">XP +${quiz.earnedXp}</div>
+          <div class="pill gold">Level ${state.player.level}</div>
+        </div>
+        <div class="question-box" style="margin-top:16px;">
+          <div class="rank-sticker">
+            <strong>${quiz.score}/${quiz.total}</strong>
+            <span>${quizRank}</span>
+          </div>
+          <h3>Дахин тоглох уу?</h3>
+          <p>Өөр асуултуудтай шинэ багц эхлүүлэхэд бэлэн. Энэ раундад ${quiz.earnedXp} XP цуглууллаа.</p>
+          <div style="margin-top:14px;">
+            <div class="progress-rail">
+              <div class="progress-fill level" style="width:${getLevelProgressPercent()}%;"></div>
+            </div>
+            <p style="margin-top:10px;color:var(--muted);">Level ${state.player.level} · ${state.player.levelXp} / ${state.player.nextLevelXp} XP</p>
+          </div>
+        </div>
+        <div class="quiz-actions">
+          <button class="action-btn" type="button" id="restart-quiz">Дахин эхлэх</button>
+          <button class="secondary-btn" type="button" id="go-letters">Үсэг рүү буцах</button>
+        </div>
+      </div>
+    `;
+
+    detailPanel.innerHTML = `
+      <div class="section-head">
+        <div>
+          <h3>Тоглоомын санаа</h3>
+          <p>Duolingo шиг хурдан давтлагын урсгалтай болголоо.</p>
+        </div>
+      </div>
+      <div class="mini-card">
+        <h4>Одоо байгаа төрөл</h4>
+        <p>Үсэг болон 2 үсэгтэй үе таних 4 сонголттой асуулт, XP болон level системтэй.</p>
+      </div>
+      <div class="mini-card" style="margin-top:12px;">
+        <h4>Дараагийн upgrade</h4>
+        <p>Сонсгол, үг бүтээх, алдаатай хариултыг дахин асуух давталт нэмж болно.</p>
+      </div>
+    `;
+
+    document.getElementById("restart-quiz").addEventListener("click", () => {
+      resetQuiz();
+      renderQuiz();
+    });
+    document.getElementById("go-letters").addEventListener("click", () => setPage("letters"));
+    return;
+  }
+
+  const questionNumber = quiz.current + 1;
+  const question = quiz.question;
+  const prompt = question.mode === "latin-to-script" || question.mode === "word-to-script" || question.mode === "number-to-script"
+    ? question.kind === "letter"
+      ? getMergedDisplayLabel(question.answer)
+      : question.answer
+    : question.kind === "word"
+      ? toMongolianScript(question.answer)
+      : question.kind === "number"
+        ? digits.find((item) => item.latin === question.answer)?.mongol || question.answer
+        : mongolianUnicode[question.answer];
+  const promptLabel = question.mode === "latin-to-script"
+    ? "Доорх Монгол бичгийг сонго"
+      : question.mode === "script-to-latin"
+        ? "Доорх тэмдэгт ямар үсэг вэ?"
+      : question.mode === "word-to-script"
+        ? "Доорх үеийн Монгол бичгийг сонго"
+      : question.mode === "script-to-word"
+        ? "Доорх Монгол бичиг ямар үе вэ?"
+      : question.mode === "number-to-script"
+        ? "Доорх Монгол тоог сонго"
+        : "Доорх Монгол тоо хэд вэ?";
+  const promptClass = question.mode === "script-to-latin" || question.mode === "script-to-word" || question.mode === "script-to-number"
+    ? question.kind === "number"
+      ? "script number-script"
+      : "script"
+    : question.kind === "word"
+      ? "word"
+      : "";
+
+  mainPanel.innerHTML = `
+    <div class="section-head">
+      <div>
+        <h2>Quiz game</h2>
+        <p>Түргэн асуулт, шууд feedback, XP цуглуулах болон level ахих систем.</p>
+      </div>
+    </div>
+    <div class="quiz-card">
+      <div class="quiz-top">
+        <div style="flex:1;">
+          <div class="progress-rail">
+            <div class="progress-fill" style="width:${progress}%;"></div>
+          </div>
+        </div>
+        <div class="quiz-meta">
+          <div class="pill">${questionNumber} / ${quiz.total}</div>
+          <div class="pill">Оноо ${quiz.score}</div>
+          <div class="pill">Streak ${quiz.streak}</div>
+          <div class="pill gold">Level ${state.player.level}</div>
+          <div class="pill gold">XP ${state.player.xp}</div>
+        </div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <div class="progress-rail">
+          <div class="progress-fill level" style="width:${getLevelProgressPercent()}%;"></div>
+        </div>
+        <p style="margin:8px 0 0;color:var(--muted);">Level ${state.player.level} · ${state.player.levelXp} / ${state.player.nextLevelXp} XP</p>
+      </div>
+      <div class="question-box">
+        <h3>${promptLabel}</h3>
+        <p>Зөв хариулт streak-ийг өсгөнө.</p>
+        <div class="quiz-prompt ${promptClass}">${prompt}</div>
+      </div>
+      <div class="quiz-options">
+        ${question.options.map((option, index) => {
+          let className = "quiz-option";
+          if (quiz.answered) {
+            if (option.value === question.answer) {
+              className += " correct";
+            } else if (quiz.selectedIndex === index) {
+              className += " wrong";
+            }
+          }
+
+          const showScript = question.mode === "latin-to-script" || question.mode === "word-to-script" || question.mode === "number-to-script";
+          const label = showScript
+            ? option.script
+            : question.kind === "letter"
+              ? getMergedDisplayLabel(option.value)
+              : option.value;
+          const extraClass = showScript
+            ? question.kind === "number"
+              ? "script number-script"
+              : "script"
+            : "";
+          return `<button class="${className}" type="button" data-option="${index}"><span class="${extraClass}">${label}</span></button>`;
+        }).join("")}
+      </div>
+      <div class="feedback ${quiz.answered && question.options[quiz.selectedIndex]?.value === question.answer ? "good" : quiz.answered ? "bad" : ""}">
+        ${quiz.answered
+          ? question.options[quiz.selectedIndex]?.value === question.answer
+            ? "Зөв байна. Сайн байна."
+            : `Бараг дөхлөө. Зөв хариулт нь ${question.kind === "letter" ? getMergedDisplayLabel(question.answer) : question.answer} / ${question.kind === "word" ? toMongolianScript(question.answer) : question.kind === "number" ? digits.find((item) => item.latin === question.answer)?.mongol || question.answer : mongolianUnicode[question.answer]}.`
+          : "Нэг сонголт дарж үргэлжлүүлээрэй."}
+      </div>
+      <div class="feedback xp">${quiz.answered && quiz.lastXpGain > 0 ? `+${quiz.lastXpGain} XP авлаа` : quiz.answered ? "Энэ асуултаас XP аваагүй." : ""}</div>
+      <div class="quiz-actions">
+        <button class="action-btn" type="button" id="next-question" ${quiz.answered ? "" : "disabled"}>${questionNumber === quiz.total ? "Дуусгах" : "Дараагийн асуулт"}</button>
+        <button class="secondary-btn" type="button" id="restart-inline">Шинээр эхлэх</button>
+      </div>
+    </div>
+  `;
+
+  detailPanel.innerHTML = `
+    <div class="section-head">
+      <div>
+        <h3>Тоглох заавар</h3>
+        <p>Үсэг, үе, тоо болон Монгол бичгийн дүрсийг хооронд нь тааруулна.</p>
+      </div>
+    </div>
+    <div class="mini-card">
+      <h4>Яагаад хэрэгтэй вэ</h4>
+      <p>Түргэн сонголттой асуултууд давтамж үүсгэж, таних хурдыг нэмэгдүүлдэг.</p>
+    </div>
+    <div class="mini-card" style="margin-top:12px;">
+      <h4>XP дүрэм</h4>
+      <p>Зөв хариулт бүр 10 XP. 3-аас дээш streak бүрт нэмэлт 5 XP bonus орно.</p>
+    </div>
+  `;
+
+  document.querySelectorAll("[data-option]").forEach((button) => {
+    button.addEventListener("click", () => {
+      if (quiz.answered) {
+        return;
+      }
+
+      quiz.selectedIndex = Number(button.dataset.option);
+      quiz.answered = true;
+      const correct = quiz.question.options[quiz.selectedIndex].value === quiz.question.answer;
+      if (correct) {
+        quiz.score += 1;
+        quiz.streak += 1;
+        quiz.lastXpGain = 10 + (quiz.streak >= 3 ? 5 : 0);
+        quiz.earnedXp += quiz.lastXpGain;
+        awardXp(quiz.lastXpGain);
+        state.player.bestStreak = Math.max(state.player.bestStreak, quiz.streak);
+        saveProgress();
+      } else {
+        quiz.streak = 0;
+        quiz.lastXpGain = 0;
+      }
+      renderQuiz();
+    });
+  });
+
+  document.getElementById("next-question").addEventListener("click", () => {
+    if (!quiz.answered) {
+      return;
+    }
+
+    quiz.current += 1;
+    if (quiz.current >= quiz.total) {
+      quiz.finished = true;
+      quiz.question = null;
+      state.player.lessonsCompleted += 1;
+      saveProgress();
+    } else {
+      quiz.answered = false;
+      quiz.selectedIndex = null;
+      quiz.question = createQuizQuestion();
+    }
+    renderQuiz();
+  });
+
+  document.getElementById("restart-inline").addEventListener("click", () => {
+    resetQuiz();
+    renderQuiz();
+  });
+}
+
+function renderProfile() {
+  mainPanel.innerHTML = `
+    <div class="section-head">
+      <div>
+        <h2>Ахицын самбар</h2>
+        <p>Quiz тоглох тусам XP цугларч, level ахина.</p>
+      </div>
+    </div>
+    <div class="forms">
+      <div class="mini-card">
+        <h4>Нийт XP</h4>
+        <p><strong style="font-size:28px;color:var(--gold-strong);">${state.player.xp}</strong></p>
+      </div>
+      <div class="mini-card">
+        <h4>Одоогийн level</h4>
+        <p><strong style="font-size:28px;color:var(--gold-strong);">${state.player.level}</strong></p>
+      </div>
+      <div class="mini-card">
+        <h4>Дуусгасан quiz</h4>
+        <p><strong style="font-size:28px;color:var(--gold-strong);">${state.player.lessonsCompleted}</strong></p>
+      </div>
+      <div class="mini-card">
+        <h4>Хамгийн өндөр streak</h4>
+        <p><strong style="font-size:28px;color:var(--gold-strong);">${state.player.bestStreak}</strong></p>
+      </div>
+      <div class="mini-card">
+        <h4>Дараагийн level</h4>
+        <p>${state.player.levelXp} / ${state.player.nextLevelXp} XP</p>
+        <div class="progress-rail" style="margin-top:12px;">
+          <div class="progress-fill level" style="width:${getLevelProgressPercent()}%;"></div>
+        </div>
+      </div>
+      <div class="mini-card">
+        <h4>Өдрийн зорилт</h4>
+        <p>${Math.max(0, 50 - (state.player.levelXp % 50))} XP цуглуулаад дараагийн milestone-д хүрээрэй.</p>
+      </div>
+    </div>
+  `;
+
+  detailPanel.innerHTML = `
+    <div class="section-head">
+      <div>
+        <h3>Санал болгож буй нэмэлт</h3>
+        <p>Энэ хэсгийг дараа нь бодит ахицтай холбож өргөтгөхөд бэлэн.</p>
+      </div>
+    </div>
+    <div class="mini-card">
+      <h4>Хийж болох сайжруулалт</h4>
+      <p>Local storage нэмбэл XP, level, streak-ээ browser дээрээ хадгалж үлдээж болно.</p>
+    </div>
+  `;
+}
+
+function render() {
+  if (state.page === "home") {
+    renderHome();
+    return;
+  }
+
+  if (state.page === "letters") {
+    renderLetters();
+    return;
+  }
+
+  if (state.page === "numbers") {
+    renderNumbers();
+    return;
+  }
+
+  if (state.page === "quiz") {
+    renderQuiz();
+    return;
+  }
+
+  renderProfile();
+}
+
+navButtons.forEach((button) => {
+  button.addEventListener("click", () => setPage(button.dataset.page));
+});
+
+loadProgress();
+resetQuiz();
+render();
+</script>
+</body>
+</html>
